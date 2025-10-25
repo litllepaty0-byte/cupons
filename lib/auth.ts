@@ -8,6 +8,7 @@ export interface User {
   name: string
   email: string
   role: "usuario" | "admin"
+  avatar_url?: string | null
   created_at: Date
 }
 
@@ -45,7 +46,7 @@ export async function getCurrentUser(): Promise<User | null> {
   if (!sessionId) return null
 
   const sessions = await query(
-    "SELECT s.*, u.id, u.nome, u.email, u.papel, u.criado_em FROM sessoes s JOIN usuarios u ON s.usuario_id = u.id WHERE s.id = ? AND s.expira_em > NOW()",
+    "SELECT s.*, u.id, u.nome, u.email, u.papel, u.avatar_url, u.criado_em FROM sessoes s JOIN usuarios u ON s.usuario_id = u.id WHERE s.id = ? AND s.expira_em > NOW()",
     [sessionId]
   )
 
@@ -56,6 +57,7 @@ export async function getCurrentUser(): Promise<User | null> {
     name: sessions[0].nome,
     email: sessions[0].email,
     role: sessions[0].papel,
+    avatar_url: sessions[0].avatar_url,
     created_at: sessions[0].criado_em,
   }
 }

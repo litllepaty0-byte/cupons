@@ -3,6 +3,27 @@ import { query } from "@/lib/db"
 import { getCurrentUser, hashPassword, verifyPassword } from "@/lib/auth"
 import { validateEmail, validatePassword, sanitizeString } from "@/lib/validation"
 
+export async function GET() {
+  try {
+    const user = await getCurrentUser()
+
+    if (!user) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+    }
+
+    return NextResponse.json({
+      id: user.id,
+      nome: user.name,
+      email: user.email,
+      papel: user.role,
+      avatar_url: user.avatar_url,
+    })
+  } catch (error) {
+    console.error("Erro ao buscar usuário:", error)
+    return NextResponse.json({ error: "Erro ao buscar usuário" }, { status: 500 })
+  }
+}
+
 export async function PUT(request: NextRequest) {
   try {
     const user = await getCurrentUser()
